@@ -4319,6 +4319,7 @@ otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 legion: otapackage
 	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(LEGION_TARGET_PACKAGE)
 	$(hide) $(MD5SUM) $(LEGION_TARGET_PACKAGE) > $(LEGION_TARGET_PACKAGE).md5sum
+	$(hide) ./build/make/tools/generate_json_build_info.sh $(LEGION_TARGET_PACKAGE)
 	echo -e "========================================="
 	echo -e ""
 	echo -e ""
