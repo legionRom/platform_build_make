@@ -830,34 +830,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   device = target_info.GetBuildProp("ro.product.device")
 
   script.Print("=================================================");
-  script.Print("");
-  script.Print("               `-/+syhhddddhhys+/-`               ");
-  script.Print("           `:oyddddddddddddddddddddyo:`           ");
-  script.Print("         :ohddddddddddddddddddddddddddho-         ");
-  script.Print("       /yddddddddddddddddddddddddddddddddy/       ");
-  script.Print("     :yddddddddddddddddddddddddddddddddddddy:     ");
-  script.Print("   `odddddddddddy:--------------:ydddddddddddo`   ");
-  script.Print("  `ydddddddddddh`+dddddddddddddd+`hdddddddddddy`  ");
-  script.Print(" `yddddddddddddh oddddddddddddddo hddddddddddddy` ");
-  script.Print(" sdddddddddddddd./dddddddddddddd/`ddddddddddddddo ");
-  script.Print("-ddddddddddddddd-:ddddhddddddddd:-ddddddddddddddd ");
-  script.Print("oddddddddddddddd/.ddd+`sysshdddd./ddddddddddddddd ");
-  script.Print("hddddddddddddddd+`ddddh.  :.oddd`+ddddddddddddddd ");
-  script.Print("dddddddddddddddds hdddy     /ddh sddddddddddddddd ");
-  script.Print("hdddddddddddddddy sdddy` -/oddds yddddddddddddddd ");
-  script.Print("odddddddddddddddd odddddhddddddo dddddddddddddddd ");
-  script.Print("-dddddddddddddddd./dddddddddddd/.dddddddddddddddd ");
-  script.Print(" oddddddddddddddd-:dddddddddddd:-dddddddddddddddo ");
-  script.Print(" `ydddddddddddddd/.dddddddddddd./ddddddddddddddy  ");
-  script.Print("  `ydddddddddddddo yddddddddddy odddddddddddddy`  ");
-  script.Print("   `odddddddddddddo------------odddddddddddddo`   ");
-  script.Print("     :yddddddddddddddddddddddddddddddddddddy:     ");
-  script.Print("       /yddddddddddddddddddddddddddddddddy/       ");
-  script.Print("         -ohddddddddddddddddddddddddddho-         ");
-  script.Print("           `:oyddddddddddddddddddddyo:`           ");
-  script.Print("               `-/+syhhddddhhys+/-`               ");
-
-  script.Print("                    LeanOS");
+  script.Print("                    BeastROMs");
   script.Print("");
   script.Print("=================================================");
   script.Print(" Android version: %s"%(android_version));

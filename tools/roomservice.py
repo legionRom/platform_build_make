@@ -43,11 +43,11 @@ except ImportError:
 DEBUG = False
 default_manifest = ".repo/manifest.xml"
 
-custom_local_manifest = ".repo/local_manifests/lean_manifest.xml"
-custom_default_revision = "lean-9.x"
-custom_dependencies = "lean.dependencies"
-org_manifest = "lean-devices"  # leave empty if org is provided in manifest
-org_display = "Lean-Devices"  # needed for displaying
+custom_local_manifest = ".repo/local_manifests/beast_manifest.xml"
+custom_default_revision = "pie"
+custom_dependencies = "beast.dependencies"
+org_manifest = "Beast-devices"  # leave empty if org is provided in manifest
+org_display = "Beast-Devices"  # needed for displaying
 
 github_auth = None
 
