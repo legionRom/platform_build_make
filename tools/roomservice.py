@@ -43,11 +43,11 @@ except ImportError:
 DEBUG = False
 default_manifest = ".repo/manifest.xml"
 
-custom_local_manifest = ".repo/local_manifests/beast_manifest.xml"
+custom_local_manifest = ".repo/local_manifests/legion_manifest.xml"
 custom_default_revision = "pie"
-custom_dependencies = "beast.dependencies"
-org_manifest = "Beast-devices"  # leave empty if org is provided in manifest
-org_display = "Beast-Devices"  # needed for displaying
+custom_dependencies = "legion.dependencies"
+org_manifest = "Legion-devices"  # leave empty if org is provided in manifest
+org_display = "Legion-Devices"  # needed for displaying
 
 github_auth = None
 

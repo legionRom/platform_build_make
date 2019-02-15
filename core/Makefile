@@ -1386,7 +1386,7 @@ $(RECOVERY_INSTALL_OTA_KEYS): $(OTA_PUBLIC_KEYS) $(DUMPKEY_JAR) $(extra_keys)
 RECOVERYIMAGE_ID_FILE := $(PRODUCT_OUT)/recovery.id
 
 define build-recoveryramdisk
-  $(hide) ./vendor/beast/tools/changelog.sh
+  $(hide) ./vendor/legion/tools/changelog.sh
   $(hide) mv $(PRODUCT_OUT)/Changelog.txt $(PRODUCT_OUT)/$(TARGET_BACON_NAME)-Changelog.txt
   $(hide) mkdir -p $(TARGET_RECOVERY_OUT)
   $(hide) mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/etc $(TARGET_RECOVERY_ROOT_OUT)/sdcard $(TARGET_RECOVERY_ROOT_OUT)/tmp
@@ -1630,7 +1630,7 @@ endif
 
 # $(1): output file
 define build-systemimage-target
-  $(hide) ./vendor/beast/tools/changelog.sh
+  $(hide) ./vendor/legion/tools/changelog.sh
   $(hide) mv $(PRODUCT_OUT)/Changelog.txt $(PRODUCT_OUT)/$(TARGET_BACON_NAME)-Changelog.txt
   @echo "Target system fs image: $(1)"
   $(call create-system-vendor-symlink)
@@ -3052,11 +3052,11 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) \
 
 TARGET_PACKAGE := $(PRODUCT_OUT)/$(TARGET_BACON_NAME).zip
 
-.PHONY: otapackage bacon beast
+.PHONY: otapackage bacon legion
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 bacon: otapackage
-bacon: beast
-beast: otapackage
+bacon: legion
+legion: otapackage
 	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(TARGET_PACKAGE)
 	$(hide) $(MD5SUM) $(TARGET_PACKAGE) > $(TARGET_PACKAGE).md5sum
 	@echo -e ${CL_BLD}${CL_CYN}"===============================-Package complete-==============================="${CL_RST}
