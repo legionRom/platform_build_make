@@ -829,16 +829,16 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   security_patch = target_info.GetBuildProp("ro.build.version.security_patch")
   device = target_info.GetBuildProp("ro.product.device")
 
-  script.Print(" _      ______ _____ _____ ____  _   _  ____   ____ _");
-  script.Print("| |    |  ____/ ____|_   _/ __ \| \ | |/ __ \ / ____|");
-  script.Print("| |    | |__ | |  __  | || |  | |  \| | |  | | (___  ");
-  script.Print("| |    |  __|| | |_ | | || |  | | . ` | |  | |\___ \ ");
-  script.Print("| |____| |___| |__| |_| || |__| | |\  | |__| |____) |");
-  script.Print("|______|______\_____|_____\____/|_| \_|\____/|_____/ ");
-  script.Print("                    By RAJKALE99                     ");
-  script.Print("          Thanks For Flashing LEGIONROM              ");
-  script.Print("                                                     ");
-  script.Print("=======================================+++===========");
+  script.Print(" =================================================");_      ______ _____ _____ ____  _   _  ____   _____
+  script.Print("| |    |  ____/ ____|_   _/ __ \| \ | |/ __ \ / ____|
+  script.Print("| |    | |__ | |  __  | || |  | |  \| | |  | | (___
+  script.Print("| |    |  __|| | |_ | | || |  | | . ` | |  | |\___ \
+  script.Print("| |____| |___| |__| |_| || |__| | |\  | |__| |____) |
+  script.Print("|______|______\_____|_____\____/|_| \_|\____/|_____/
+  script.Print("                            By RAJKALE99                                                  ");
+  script.Print("                   Thanks For Flashing LEGIONROM                                          ");
+  script.Print("                                                                                          ");
+  script.Print("=================================================");
   script.Print(" Android version: %s"%(android_version));
   script.Print(" Build id: %s"%(build_id));
   script.Print(" Build date: %s"%(build_date));
