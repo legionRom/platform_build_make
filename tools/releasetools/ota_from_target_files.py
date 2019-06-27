@@ -836,9 +836,9 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.Print("| |    |  __|| | |_ | | || |  | | . ` | |  | |\___ \ ");
   script.Print("| |____| |___| |__| |_| || |__| | |\  | |__| |____) |");
   script.Print("|______|______\_____|_____\____/|_| \_|\____/|_____/ ");
-  script.Print("						     ");
-  script.Print("                    By RAJKALE99                     ");
-  script.Print("          Thanks For Flashing LEGIONOS              ");
+  script.Print("						                                         ");
+  script.Print("                    By RAJ KALE                      ");
+  script.Print("          Thanks For Flashing LEGIONOS               ");
   script.Print("                                                     ");
   script.Print("=====================================================");
   script.Print(" Android version: %s"%(android_version));
@@ -846,7 +846,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.Print(" Build date: %s"%(build_date));
   script.Print(" Security patch: %s"%(security_patch));
   script.Print(" Device: %s"%(device));
-  script.Print("=================================================");
+  script.Print("=====================================================");
 
   script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
   device_specific.FullOTA_InstallBegin()
