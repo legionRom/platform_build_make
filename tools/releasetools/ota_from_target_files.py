@@ -1068,7 +1068,21 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   device_specific.FullOTA_InstallEnd()
 
   script.Print("Enjoy LegionOS")
-               
+  if OPTIONS.extra_script is not None:
+    script.AppendExtra(OPTIONS.extra_script)
+
+  script.UnmountAll()
+
+  if OPTIONS.wipe_user_data:
+    script.ShowProgress(0.1, 10)
+    script.FormatPartition("/data")
+
+  if OPTIONS.two_step:
+    script.AppendExtra("""
+set_stage("%(bcb_dev)s", "");
+""" % bcb_dev)
+    script.AppendExtra("else\n")
+
     # Stage 1/3: Nothing to verify for full OTA. Write recovery image to /boot.
     script.Comment("Stage 1/3")
     _WriteRecoveryImageToBoot(script, output_zip)
