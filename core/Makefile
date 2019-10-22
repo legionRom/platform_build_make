@@ -4432,8 +4432,13 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) \
 	@echo "Package OTA: $@"
 	$(call build-ota-package-target,$@,-k $(KEY_CERT_PAIR) --backup=$(backuptool) --output_metadata_path $(INTERNAL_OTA_METADATA))
 
-.PHONY: otapackage
+LEGION_TARGET_PACKAGE := $(PRODUCT_OUT)/$(LEGION_BUILD_VERSION).zip
+.PHONY: otapackage legion
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
+legion: otapackage
+	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(LEGION_TARGET_PACKAGE)
+	$(hide) $(MD5SUM) $(LEGION_TARGET_PACKAGE) > $(LEGION_TARGET_PACKAGE).md5sum
+
 ifeq ($(BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE),true)
 name := $(TARGET_PRODUCT)
 ifeq ($(TARGET_BUILD_TYPE),debug)
