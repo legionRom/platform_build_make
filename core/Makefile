@@ -430,6 +430,7 @@ endif
 	$(hide) TARGET_BUILD_TYPE="$(TARGET_BUILD_VARIANT)" \
 	        TARGET_BUILD_FLAVOR="$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)" \
 	        TARGET_DEVICE="$(TARGET_VENDOR_DEVICE_NAME)" \
+		LEGION_DEVICE="$(TARGET_DEVICE)" \
 	        PRODUCT_DEFAULT_LOCALE="$(call get-default-product-locale,$(PRODUCT_LOCALES))" \
 	        PRODUCT_DEFAULT_WIFI_CHANNELS="$(PRODUCT_DEFAULT_WIFI_CHANNELS)" \
 	        PRIVATE_BUILD_DESC="$(PRIVATE_BUILD_DESC)" \
@@ -4442,6 +4443,14 @@ otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 legion: otapackage
 	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(LEGION_TARGET_PACKAGE)
 	$(hide) $(MD5SUM) $(LEGION_TARGET_PACKAGE) > $(LEGION_TARGET_PACKAGE).md5sum
+	@echo -e ""
+	@echo -e "${cya}Building ${bldcya}LEGION-OS ${txtrst}";
+	@echo -e ""
+	@echo -e "zip: "$(LEGION_TARGET_PACKAGE)
+	@echo -e "md5: `cat $(LEGION_TARGET_PACKAGE).md5sum | cut -d ' ' -f 1`"
+	@echo -e "size:`ls -lah $(LEGION_TARGET_PACKAGE) | cut -d ' ' -f 5`"
+	echo -e "id: `sha1sum $(LEGION_TARGET_PACKAGE) | cut -d ' ' -f 1`"
+	@echo -e ""
 
 ifeq ($(BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE),true)
 name := $(TARGET_PRODUCT)
