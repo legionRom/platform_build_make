@@ -4483,8 +4483,8 @@ legion: otapackage
 	@echo -e ""
 	@echo -e "zip: "$(LEGION_TARGET_PACKAGE)
 	@echo -e "md5: `cat $(LEGION_TARGET_PACKAGE).md5sum | cut -d ' ' -f 1`"
-	@echo -e "size:`ls -lah $(LEGION_TARGET_PACKAGE) | cut -d ' ' -f 5`"
-	echo -e "id: `sha1sum $(LEGION_TARGET_PACKAGE) | cut -d ' ' -f 1`"
+	@echo -e "size:`du -sh $(LEGION_TARGET_PACKAGE) | cut -d ' ' -f 5`"
+	echo -e "id: `sha256sum $(LEGION_TARGET_PACKAGE) | cut -d ' ' -f 1`"
 	@echo -e ""
 
 ifeq ($(BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE),true)
