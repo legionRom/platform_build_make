@@ -156,11 +156,9 @@ class EdifyGenerator(object):
            ");")
     self.script.append(self.WordWrap(cmd))
 
-  def MountSys(self, command, mount_point):
-    fstab = self.fstab
-    if fstab:
-      p = fstab[mount_point]
-    self.script.append('run_program("/tmp/install/bin/system-mount.sh", "%s", "%s");' % (command, p.device))
+  def RunBackup(self, command, system_path):
+    self.script.append(('run_program("/tmp/install/bin/backuptool.sh", "%s", "%s");' % (
+        command, system_path)))
 
   def MountSys(self, command):
     self.script.append(('run_program("/tmp/install/bin/system-mount.sh", "%s");' % command))
