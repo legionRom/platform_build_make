@@ -21,8 +21,13 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_product.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_product.mk)
 
 # Default AOSP sounds
-$(call inherit-product-if-exists, frameworks/base/data/sounds/GoogleAudio.mk)
+ifeq ($(LEGION_BUILD),)
+$(call inherit-product-if-exists, frameworks/base/data/sounds/AllAudio.mk)
+else
+$(call inherit-product-if-exists, frameworks/base/data/sounds/AudioPackage14.mk)
+endif
 
+ifeq ($(LEGION_BUILD),)
 # GSI doesn't support apex for now.
 # Properties set in product take precedence over those in vendor.
 PRODUCT_PRODUCT_PROPERTIES += \
@@ -30,8 +35,10 @@ PRODUCT_PRODUCT_PROPERTIES += \
 
 # Additional settings used in all AOSP builds
 PRODUCT_PRODUCT_PROPERTIES += \
-    ro.config.ringtone=The_big_adventure.ogg \
-    ro.config.notification_sound=Popcorn.ogg \
+    ro.config.ringtone=Ring_Synth_04.ogg \
+    ro.config.notification_sound=pixiedust.ogg \
+
+endif
 
 # The mainline checking whitelist, should be clean up
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
@@ -84,6 +91,13 @@ PRODUCT_PACKAGES += \
     PhotoTable \
     WAPPushManager \
     WallpaperPicker \
+
+# Telephony:
+#   Provide a APN configuration to GSI product
+ifeq ($(LEGION_BUILD),)
+PRODUCT_COPY_FILES += \
+    device/sample/etc/apns-full-conf.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/apns-conf.xml
+endif
 
 # NFC:
 #   Provide a libnfc-nci.conf to GSI product

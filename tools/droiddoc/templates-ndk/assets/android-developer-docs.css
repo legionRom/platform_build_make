@@ -746,41 +746,41 @@ td.gsc-search-button {
 
 .clearer { clear:both; }
 
-a#arrow-left, a#arrow-right {
+a#legion-left, a#legion-right {
   float:left;
   width:42px;
   height:42px;
   background-image:url(images/home/carousel_buttons_sprite.png);
   background-repeat:no-repeat;
 }
-a#arrow-left {
+a#legion-left {
   margin:35px 3px 0 10px;
 }
-a#arrow-right {
+a#legion-right {
   margin:35px 10px 0 0;
 }
-a.arrow-left-off,
-a#arrow-left.arrow-left-off:hover {
+a.legion-left-off,
+a#legion-left.legion-left-off:hover {
   background-position:0 0;
 }
-a.arrow-right-off,
-a#arrow-right.arrow-right-off:hover {
+a.legion-right-off,
+a#legion-right.legion-right-off:hover {
   background-position:-42px 0;
 }
-a#arrow-left:hover {
+a#legion-left:hover {
   background-position:0 -42px;
 }
-a#arrow-right:hover {
+a#legion-right:hover {
   background-position:-42px -42px;
 }
-a.arrow-left-on {
+a.legion-left-on {
   background-position:0 0;
 }
-a.arrow-right-on {
+a.legion-right-on {
   background-position:-42px 0;
 }
-a.arrow-right-off,
-a.arrow-left-off {
+a.legion-right-off,
+a.legion-left-off {
   cursor:default;
 }
 
@@ -1093,12 +1093,12 @@ ul.videoPreviews p.full {
 
 ul.videoPreviews span.more {
   padding:0 0 0 12px;
-  background:url(images/arrow_bluelink_down.png) 0 2px no-repeat;
+  background:url(images/legion_bluelink_down.png) 0 2px no-repeat;
 }
 
 ul.videoPreviews span.less {
   padding:0 0 0 12px;
-  background:url(images/arrow_bluelink_up.png) 0 2px no-repeat;
+  background:url(images/legion_bluelink_up.png) 0 2px no-repeat;
   display:none;
 }
 

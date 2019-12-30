@@ -226,9 +226,9 @@ TARGET_CPU_ABI_LIST := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST))
 TARGET_CPU_ABI_LIST_32_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_32_BIT)))
 TARGET_CPU_ABI_LIST_64_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_64_BIT)))
 
-#ifneq ($(BUILD_BROKEN_ANDROIDMK_EXPORTS),true)
-#$(KATI_obsolete_export It is a global setting. See $(CHANGES_URL)#export_keyword)
-#endif
+ifneq ($(BUILD_BROKEN_ANDROIDMK_EXPORTS),true)
+$(KATI_obsolete_export It is a global setting. See $(CHANGES_URL)#export_keyword)
+endif
 
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_RAMDISK
@@ -432,13 +432,6 @@ ifdef BOARD_PREBUILT_PRODUCT_SERVICESIMAGE
   BUILDING_PRODUCT_SERVICES_IMAGE :=
 endif
 .KATI_READONLY := BUILDING_PRODUCT_SERVICES_IMAGE
-
-###########################################
-# Now we can substitute with the real value of TARGET_COPY_OUT_VENDOR_OVERLAY
-ifeq ($(TARGET_COPY_OUT_VENDOR_OVERLAY),$(_vendor_overlay_path_placeholder))
-  TARGET_COPY_OUT_VENDOR_OVERLAY := $(TARGET_COPY_OUT_PRODUCT)/vendor_overlay/$(PRODUCT_TARGET_VNDK_VERSION)
-endif
-PRODUCT_COPY_FILES := $(subst $(_vendor_overlay_path_placeholder),$(TARGET_COPY_OUT_VENDOR_OVERLAY),$(PRODUCT_COPY_FILES))
 
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_ODM

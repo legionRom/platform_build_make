@@ -720,7 +720,7 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
-         'Java: Possible sign flip from narrowing conversion',
+         'Java: Possible sign flip from nlegioning conversion',
      'patterns': [r".*: warning: \[BadComparable\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
@@ -1116,7 +1116,7 @@ warn_patterns = [
      'severity': Severity.MEDIUM,
      'description':
          'Java: Compound assignments may hide dangerous casts',
-     'patterns': [r".*: warning: \[NarrowingCompoundAssignment\] .+"]},
+     'patterns': [r".*: warning: \[NlegioningCompoundAssignment\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':

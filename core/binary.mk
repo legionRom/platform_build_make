@@ -465,6 +465,26 @@ ifneq ($(foreach i,$(my_c_includes),$(filter %/..,$(i))$(findstring /../,$(i))),
 my_soong_problems += dotdot_incs
 endif
 
+####################################################
+## Add FDO flags if FDO is turned on and supported
+## Please note that we will do option filtering during FDO build.
+## i.e. Os->O2, remove -fno-early-inline and -finline-limit.
+##################################################################
+my_fdo_build :=
+ifneq ($(filter true always, $(LOCAL_FDO_SUPPORT)),)
+  ifeq ($(BUILD_FDO_INSTRUMENT),true)
+    my_cflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_FDO_INSTRUMENT_CFLAGS)
+    my_ldflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_FDO_INSTRUMENT_LDFLAGS)
+    my_fdo_build := true
+  else ifneq ($(filter true,$(BUILD_FDO_OPTIMIZE))$(filter always,$(LOCAL_FDO_SUPPORT)),)
+    my_cflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_FDO_OPTIMIZE_CFLAGS)
+    my_fdo_build := true
+  endif
+  # Disable ccache (or other compiler wrapper) except gomacc, unless
+  # it can handle -fprofile-use properly.
+
+  # ccache supports -fprofile-use as of version 3.2. Parse the version output
+  # of each wrapper to determine if it's ccache 3.2 or newer.
   is_cc_ccache := $(shell if [ "`$(my_cc_wrapper) -V 2>/dev/null | head -1 | cut -d' ' -f1`" = ccache ]; then echo true; fi)
   ifeq ($(is_cc_ccache),true)
     cc_ccache_version := $(shell $(my_cc_wrapper) -V | head -1 | grep -o '[[:digit:]]\+\.[[:digit:]]\+')
@@ -486,6 +506,7 @@ endif
   ifneq ($(cxx_ccache_ge_3_2),true)
     my_cxx_wrapper := $(filter $(GOMA_CC),$(my_cxx_wrapper))
   endif
+endif
 
 ###########################################################
 ## Explicitly declare assembly-only __ASSEMBLY__ macro for
@@ -1419,15 +1440,9 @@ built_whole_libraries := \
 # libraries have already been linked into the module at that point.
 # We do, however, care about the NOTICE files for any static
 # libraries that we use. (see notice_files.mk)
-#
-# Don't do this in mm, since many of the targets won't exist.
-ifeq ($(ONE_SHOT_MAKEFILE),)
 installed_static_library_notice_file_targets := \
     $(foreach lib,$(my_static_libraries) $(my_whole_static_libraries), \
       NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-STATIC_LIBRARIES-$(lib))
-else
-installed_static_library_notice_file_targets :=
-endif
 
 $(notice_target): | $(installed_static_library_notice_file_targets)
 $(LOCAL_INSTALLED_MODULE): | $(notice_target)

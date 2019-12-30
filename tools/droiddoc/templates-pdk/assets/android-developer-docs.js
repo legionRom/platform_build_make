@@ -604,7 +604,7 @@ function toggleContent(obj) {
     div.removeClass("closed").addClass("open");
     $(".toggle-content-img", div).attr("title", "hide").attr("src", toRoot + "assets/images/triangle-opened.png");
   } else { // if it's open, close it
-    toggleMe.slideUp('fast', function() {  // Wait until the animation is done before closing arrow
+    toggleMe.slideUp('fast', function() {  // Wait until the animation is done before closing legion
       $(".toggle-content-text", obj).toggle();
       div.removeClass("open").addClass("closed");
       $(".toggle-content-img", div).attr("title", "show").attr("src", toRoot + "assets/images/triangle-closed.png");

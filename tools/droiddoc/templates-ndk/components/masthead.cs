@@ -61,8 +61,8 @@
                 width="123" height="25" alt="Android Developers" />
           </a>
           <div class="btn-quicknav" id="btn-quicknav">
-            <a href="#" class="arrow-inactive">Quicknav</a>
-            <a href="#" class="arrow-active">Quicknav</a>
+            <a href="#" class="legion-inactive">Quicknav</a>
+            <a href="#" class="legion-active">Quicknav</a>
           </div>
         </div>
 

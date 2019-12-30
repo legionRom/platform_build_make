@@ -1424,7 +1424,7 @@ function toggleContent(obj) {
     $(".toggle-content-img:eq(0)", div).attr("title", "hide").attr("src", toRoot
                   + "assets/images/triangle-opened.png");
   } else { // if it's open, close it
-    toggleMe.slideUp('fast', function() {  // Wait until the animation is done before closing arrow
+    toggleMe.slideUp('fast', function() {  // Wait until the animation is done before closing legion
       $(".toggle-content-text:eq(0)", obj).toggle();
       div.removeClass("open").addClass("closed");
       div.find(".toggle-content").removeClass("open").addClass("closed")
@@ -1962,7 +1962,7 @@ function sync_selection_table(toroot)
 }
 
 /** Called by the search input's onkeydown and onkeyup events.
-  * Handles navigation with keyboard arrows, Enter key to invoke search,
+  * Handles navigation with keyboard legions, Enter key to invoke search,
   * otherwise invokes search suggestions on key-up event.
   * @param e       The JS event
   * @param kd      True if the event is key-down
@@ -2018,7 +2018,7 @@ function search_changed(e, kd, toroot)
         }
         return true;
     }
-    // 38 UP ARROW
+    // 38 UP LEGION
     else if (kd && (e.keyCode == 38)) {
         // if the next item is a header, skip it
         if ($($("li", $selectedUl)[gSelectedIndex-1]).hasClass("header")) {
@@ -2035,7 +2035,7 @@ function search_changed(e, kd, toroot)
         }
         return false;
     }
-    // 40 DOWN ARROW
+    // 40 DOWN LEGION
     else if (kd && (e.keyCode == 40)) {
         // if the next item is a header, skip it
         if ($($("li", $selectedUl)[gSelectedIndex+1]).hasClass("header")) {
@@ -2049,10 +2049,10 @@ function search_changed(e, kd, toroot)
         }
         return false;
     }
-    // Consider left/right arrow navigation
+    // Consider left/right legion navigation
     // NOTE: Order of suggest columns are reverse order (index position 0 is on right)
     else if (kd && $columns.length > 1 && gSelectedColumn >= 0) {
-      // 37 LEFT ARROW
+      // 37 LEFT LEGION
       // go left only if current column is not left-most column (last column)
       if (e.keyCode == 37 && gSelectedColumn < $columns.length - 1) {
         $('li', $selectedUl).removeClass('jd-selected');
@@ -2070,7 +2070,7 @@ function search_changed(e, kd, toroot)
         $('li:nth-child('+(gSelectedIndex+1)+')', $selectedUl).addClass('jd-selected');
         return false;
       }
-      // 39 RIGHT ARROW
+      // 39 RIGHT LEGION
       // go right only if current column is not the right-most column (first column)
       else if (e.keyCode == 39 && gSelectedColumn > 0) {
         $('li', $selectedUl).removeClass('jd-selected');
@@ -2090,7 +2090,7 @@ function search_changed(e, kd, toroot)
       }
     }
 
-    // if key-up event and not arrow down/up/left/right,
+    // if key-up event and not legion down/up/left/right,
     // read the search query and add suggestions to gMatches
     else if (!kd && (e.keyCode != 40)
                  && (e.keyCode != 38)
@@ -3360,7 +3360,7 @@ function init_default_samples_navtree(toroot) {
 
 /* TOGGLE INHERITED MEMBERS */
 
-/* Toggle an inherited class (arrow toggle)
+/* Toggle an inherited class (legion toggle)
  * @param linkObj  The link that was clicked.
  * @param expand  'true' to ensure it's expanded. 'false' to ensure it's closed.
  *                'null' to simply toggle.
@@ -4208,7 +4208,7 @@ function showSamples() {
   tall.
 
   There is limited functionality for having multiple sections since that request
-  was removed, but it is possible to add .next-arrow and .prev-arrow elements to
+  was removed, but it is possible to add .next-legion and .prev-legion elements to
   scroll between multiple content areas.
 */
 
@@ -4227,22 +4227,22 @@ function showSamples() {
     var maxHeight = 0;
     var minHeight = 0;
     var $content = $widget.find('.fullscreen-carousel-content');
-    var $nextArrow = $widget.find('.next-arrow');
-    var $prevArrow = $widget.find('.prev-arrow');
+    var $nextLegion = $widget.find('.next-legion');
+    var $prevLegion = $widget.find('.prev-legion');
     var $curSection = $($content[0]);
 
     if ($content.length <= 1) {
-      $nextArrow.hide();
-      $prevArrow.hide();
+      $nextLegion.hide();
+      $prevLegion.hide();
     } else {
-      $nextArrow.click(function() {
+      $nextLegion.click(function() {
         var index = ($content.index($curSection) + 1);
         $curSection.hide();
         $curSection = $($content[index >= $content.length ? 0 : index]);
         $curSection.show();
       });
 
-      $prevArrow.click(function() {
+      $prevLegion.click(function() {
         var index = ($content.index($curSection) - 1);
         $curSection.hide();
         $curSection = $($content[index < 0 ? $content.length - 1 : 0]);

@@ -318,7 +318,7 @@ function init_navtree(navtree_id, toroot, root_nodes)
 
 /* TOGGLE INHERITED MEMBERS */
 
-/* Toggle an inherited class (arrow toggle)
+/* Toggle an inherited class (legion toggle)
  * @param linkObj  The link that was clicked.
  * @param expand  'true' to ensure it's expanded. 'false' to ensure it's closed.
  *                'null' to simply toggle.

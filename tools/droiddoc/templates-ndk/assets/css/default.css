@@ -1388,7 +1388,7 @@ color-stop(50%, #acbc00), color-stop(50%, #bdde00), color-stop(100%, #bdde00));
   margin: 0px 0;
   border: solid 1px #EBEBEB;
   -webkit-appearance: none;
-  background: white url('../images/arrows-up-down.png') right center no-repeat;
+  background: white url('../images/legions-up-down.png') right center no-repeat;
   height: 30px;
   color: #222;
   line-height: normal;
@@ -2092,7 +2092,7 @@ ul ul {
     border: solid 1px #ebebeb;
     border-top-color: #ddd;
     -webkit-appearance: none;
-    background: #f3f3f3 url(../images/arrows-up-down.png) right center no-repeat;
+    background: #f3f3f3 url(../images/legions-up-down.png) right center no-repeat;
     height: 30px;
     color: #222;
     line-height: normal;
@@ -2473,7 +2473,7 @@ a:visited,
   appearance:none;
   -moz-appearance:none;
   -webkit-appearance: none;
-  background: transparent url(../images/arrows-up-down.png) 23px 5px no-repeat;
+  background: transparent url(../images/legions-up-down.png) 23px 5px no-repeat;
   color: #222;
   height: 19px;
   line-height: 19px;
@@ -3209,7 +3209,7 @@ a.slideshow-next, a.slideshow-next:visited {
 
   float: right;
 
-  background: url(../images/arrow-right.png) no-repeat 0 0
+  background: url(../images/legion-right.png) no-repeat 0 0
 
 }
 
@@ -3217,7 +3217,7 @@ a.slideshow-prev, a.slideshow-prev:visited {
 
   float: left;
 
-  background: url(../images/arrow-left.png) no-repeat 0 0
+  background: url(../images/legion-left.png) no-repeat 0 0
 
 }
 
@@ -4316,19 +4316,19 @@ body.reference a[name]:empty {
   text-indent:-9999em;
   width:10px;
   height:5px;
-  background:url(../images/quicknav_arrow.png) no-repeat;
+  background:url(../images/quicknav_legion.png) no-repeat;
 }
 
-.btn-quicknav a.arrow-active {
+.btn-quicknav a.legion-active {
   background-position: 0 -5px;
   display:none;
 }
 
-#header-wrap.quicknav a.arrow-inactive {
+#header-wrap.quicknav a.legion-inactive {
   display:none;
 }
 
-.btn-quicknav.active a.arrow-active {
+.btn-quicknav.active a.legion-active {
   display:block;
 }
 
@@ -4831,29 +4831,29 @@ a.download-sdk {
   height: 100%;
 }
 
-.jspArrow {
+.jspLegion {
   background: #999;
   text-indent: -20000px;
   display: block;
   cursor: pointer;
 }
 
-.jspArrow.jspDisabled {
+.jspLegion.jspDisabled {
   cursor: default;
   background: #ccc;
 }
 
-.jspVerticalBar .jspArrow {
+.jspVerticalBar .jspLegion {
   height: 16px;
 }
 
-.jspHorizontalBar .jspArrow {
+.jspHorizontalBar .jspLegion {
   width: 16px;
   float: left;
   height: 100%;
 }
 
-.jspVerticalBar .jspArrow:focus {
+.jspVerticalBar .jspLegion:focus {
   outline: none;
 }
 
@@ -4903,10 +4903,10 @@ a.download-sdk {
   -webkit-transform: none;
 }
 .slideshow-develop a.slideshow-next {
-  background: url(../images/arrow-right-develop.png);
+  background: url(../images/legion-right-develop.png);
 }
 .slideshow-develop a.slideshow-prev {
-  background: url(../images/arrow-left-develop.png);
+  background: url(../images/legion-left-develop.png);
 }
 .slideshow-develop .content-right {
   float: left;
@@ -5674,7 +5674,7 @@ a.download-sdk {
   position: relative;
 }
 .resource-stack-layout .section-card-menu .card-info .title:after {
-  background: url(../images/stack-arrow-right.png);
+  background: url(../images/stack-legion-right.png);
   content: '';
   opacity: 0;
   -webkit-transition: opacity 0.25s;
@@ -5693,7 +5693,7 @@ a.download-sdk {
   display: inline-block;
 }
 .resource-stack-layout .section-card-menu .card-info .title.more:after {
-  background: url(../images/stack-arrow-right.png);
+  background: url(../images/stack-legion-right.png);
   content: '';
   display: block;
   position: absolute;
@@ -6849,7 +6849,7 @@ a.landing-button:visited {
   z-index: 10;
 }
 
-.landing-down-arrow {
+.landing-down-legion {
   padding: 24px;
   display: inline-block;
   opacity: .5;
@@ -6862,11 +6862,11 @@ a.landing-button:visited {
   -webkit-animation-duration: 4s;
 }
 
-.landing-down-arrow:hover {
+.landing-down-legion:hover {
   opacity: 1;
 }
 
-.landing-down-arrow img {
+.landing-down-legion img {
   height: 28px;
   width: 28px;
   margin: 0 auto;

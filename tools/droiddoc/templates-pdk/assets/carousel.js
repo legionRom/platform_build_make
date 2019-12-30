@@ -118,14 +118,14 @@ function buildCarousel() {
 
 // -- dependencies:
 //    (1) div containing slides, (2) a "clip" div to hide the scroller
-//    (3) control arrows
+//    (3) control legions
 
 // -- * config below * -- //
 
 var slideCode = droidList; // the dictionary of slides
 var slideList = 'app-list'; // the div containing the slides
-var arrowRight = 'arrow-right'; // the right control arrow
-var arrowLeft = 'arrow-left'; // the left control arrow
+var legionRight = 'legion-right'; // the right control legion
+var legionLeft = 'legion-left'; // the left control legion
 
 
 function showPreview(slideName) {
@@ -219,7 +219,7 @@ function getStyle(element, cssProperty){
   }
 }
 
-// Left and right arrows
+// Left and right legions
 function page_left() {
   var amount = slideWidth;
   animateSlide(amount, 'left');
@@ -232,7 +232,7 @@ function page_right() {
 
 
 // animates the strip
-// - sets arrows to on or off
+// - sets legions to on or off
 function animateSlide(amount,dir) {
   var currentStripPosition = parseInt(getStyle(slideList,'left'));
   var motionDistance;
@@ -242,30 +242,30 @@ function animateSlide(amount,dir) {
     motionDistance = amount;
   }
   
-  var rightarrow = document.getElementById(arrowRight);
-  var leftarrow = document.getElementById(arrowLeft);
+  var rightlegion = document.getElementById(legionRight);
+  var leftlegion = document.getElementById(legionLeft);
   
   function aToggle(state,aDir) {
     if (state == 'on') {
       if (aDir =='right') {
-        rightarrow.className = 'arrow-right-on';
-        rightarrow.href = "javascript:page_right()";
+        rightlegion.className = 'legion-right-on';
+        rightlegion.href = "javascript:page_right()";
       } else {
-        leftarrow.className = 'arrow-left-on';
-        leftarrow.href = "javascript:page_left()";
+        leftlegion.className = 'legion-left-on';
+        leftlegion.href = "javascript:page_left()";
       }
     } else {
       if (aDir =='right') {
-        rightarrow.href = "javascript:{}";
-        rightarrow.className = 'arrow-right-off'; 
+        rightlegion.href = "javascript:{}";
+        rightlegion.className = 'legion-right-off'; 
       } else {
-        leftarrow.href = "javascript:{}";
-        leftarrow.className = 'arrow-left-off';
+        leftlegion.href = "javascript:{}";
+        leftlegion.className = 'legion-left-off';
       }
     }
   }
   
-  function arrowChange(rP) {
+  function legionChange(rP) {
     if (rP >= rightScrollLimit) {
       aToggle('on','right');
     }
@@ -281,11 +281,11 @@ function animateSlide(amount,dir) {
   }
 
   if (dir == 'right' && is_animating == 0) {
-    arrowChange(currentStripPosition-motionDistance);
+    legionChange(currentStripPosition-motionDistance);
     is_animating = 1;
     slide(motionDistance, slideList, 0, currentStripPosition);
   } else if (dir == 'left' && is_animating == 0) {
-    arrowChange(currentStripPosition+motionDistance);
+    legionChange(currentStripPosition+motionDistance);
     is_animating = 1;
     rightStripPosition = currentStripPosition + motionDistance;
     slide(motionDistance, slideList, 1, rightStripPosition);

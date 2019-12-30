@@ -116,7 +116,7 @@ function search_changed(e, kd, toroot)
             return true;
         }
     }
-    // 38 -- arrow up
+    // 38 -- legion up
     else if (kd && (e.keyCode == 38)) {
         if (gSelectedIndex >= 0) {
             gSelectedIndex--;
@@ -124,7 +124,7 @@ function search_changed(e, kd, toroot)
         sync_selection_table(toroot);
         return false;
     }
-    // 40 -- arrow down
+    // 40 -- legion down
     else if (kd && (e.keyCode == 40)) {
         if (gSelectedIndex < gMatches.length-1
                         && gSelectedIndex < ROW_COUNT-1) {
