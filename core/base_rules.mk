@@ -83,8 +83,6 @@ else ifneq ($(filter $(TARGET_OUT_PRODUCT)/%,$(_path)),)
 LOCAL_PRODUCT_MODULE := true
 else ifneq ($(filter $(TARGET_OUT_PRODUCT_SERVICES)/%,$(_path)),)
 LOCAL_PRODUCT_SERVICES_MODULE := true
-else ifneq ($(filter $(TARGET_OUT_VENDOR_OVERLAY)/%,$(_path)),)
-LOCAL_VENDOR_OVERLAY_MODULE := true
 endif
 _path :=
 
@@ -102,8 +100,7 @@ non_system_module := $(filter true, \
    $(LOCAL_PRODUCT_MODULE) \
    $(LOCAL_PRODUCT_SERVICES_MODULE) \
    $(LOCAL_VENDOR_MODULE) \
-   $(LOCAL_PROPRIETARY_MODULE) \
-   $(LOCAL_VENDOR_OVERLAY_MODULE))
+   $(LOCAL_PROPRIETARY_MODULE))
 
 include $(BUILD_SYSTEM)/local_vndk.mk
 include $(BUILD_SYSTEM)/local_systemsdk.mk
@@ -129,9 +126,13 @@ LOCAL_ADDITIONAL_DEPENDENCIES := $(filter-out %.mk,$(LOCAL_ADDITIONAL_DEPENDENCI
 
 my_bad_deps := $(strip $(foreach dep,$(filter-out | ||,$(LOCAL_ADDITIONAL_DEPENDENCIES)),\
                  $(if $(findstring /,$(dep)),,$(dep))))
+my_bad_deps_sans_kernel := $(strip $(foreach dep,$(filter-out | ||,$(my_bad_deps)),\
+                 $(if $(findstring KERNEL_OBJ,$(dep)),,$(dep))))
+ifeq ($(my_bad_deps_sans_kernel),)
 ifneq ($(my_bad_deps),)
 $(call pretty-warning,"Bad LOCAL_ADDITIONAL_DEPENDENCIES: $(my_bad_deps)")
 $(call pretty-error,"LOCAL_ADDITIONAL_DEPENDENCIES must only contain paths (not module names)")
+endif
 endif
 
 ###########################################################
@@ -239,9 +240,6 @@ else ifeq (true,$(strip $(LOCAL_PRODUCT_SERVICES_MODULE)))
   partition_tag := _PRODUCT_SERVICES
 else ifeq (NATIVE_TESTS,$(LOCAL_MODULE_CLASS))
   partition_tag := _DATA
-else ifeq (true,$(strip $(LOCAL_VENDOR_OVERLAY_MODULE)))
-  partition_tag := _VENDOR_OVERLAY
-
 else
   # The definition of should-install-to-system will be different depending
   # on which goal (e.g., sdk or just droid) is being built.
@@ -767,7 +765,7 @@ endif  # LOCAL_PRESUBMIT_DISABLED
 ## Register with ALL_MODULES
 ###########################################################
 
-ifeq ($(filter $(my_register_name),$(ALL_MODULES)),)
+ifndef ALL_MODULES.$(my_register_name).PATH
     # These keys are no longer used, they've been replaced by keys that specify
     # target/host/host_cross (REQUIRED_FROM_TARGET / REQUIRED_FROM_HOST) and similar.
     #
@@ -897,6 +895,7 @@ INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)
 ##########################################################
 # Track module-level dependencies.
 # Use $(LOCAL_MODULE) instead of $(my_register_name) to ignore module's bitness.
+ifneq (,$(filter deps-license,$(MAKECMDGOALS)))
 ALL_DEPS.MODULES := $(ALL_DEPS.MODULES) $(LOCAL_MODULE)
 ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
   $(ALL_MODULES.$(LOCAL_MODULE).ALL_DEPS) \
@@ -909,6 +908,7 @@ ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
   $(LOCAL_JNI_SHARED_LIBRARIES))
 
 ALL_DEPS.$(LOCAL_MODULE).LICENSE := $(sort $(ALL_DEPS.$(LOCAL_MODULE).LICENSE) $(license_files))
+endif
 
 ###########################################################
 ## Take care of my_module_tags
@@ -918,7 +918,7 @@ ALL_DEPS.$(LOCAL_MODULE).LICENSE := $(sort $(ALL_DEPS.$(LOCAL_MODULE).LICENSE) $
 ALL_MODULE_TAGS := $(sort $(ALL_MODULE_TAGS) $(my_module_tags))
 
 # Add this module name to the tag list of each specified tag.
-$(foreach tag,$(my_module_tags),\
+$(foreach tag,$(filter-out optional,$(my_module_tags)),\
     $(eval ALL_MODULE_NAME_TAGS.$(tag) := $$(ALL_MODULE_NAME_TAGS.$(tag)) $(my_register_name)))
 
 ###########################################################

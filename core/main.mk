@@ -296,7 +296,7 @@ ifneq (,$(user_variant))
 
 else # !user_variant
   # Turn on checkjni for non-user builds.
-  # ADDITIONAL_BUILD_PROPERTIES += ro.kernel.android.checkjni=1
+  ADDITIONAL_BUILD_PROPERTIES += ro.kernel.android.checkjni=1
   # Set device insecure for non-user builds.
   ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0
   # Allow mock locations by default for non user builds
@@ -306,6 +306,8 @@ endif # !user_variant
 ifeq (true,$(strip $(enable_target_debugging)))
   # Target is more debuggable and adbd is on by default
   ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=1
+  # Enable Dalvik lock contention logging.
+  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.lockprof.threshold=500
 else # !enable_target_debugging
   # Target is less debuggable and adbd is off by default
   ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=0
@@ -362,10 +364,6 @@ endif
 BUILD_WITHOUT_PV := true
 
 ADDITIONAL_BUILD_PROPERTIES += net.bt.name=Android
-
-# ------------------------------------------------------------
-# Include vendor specific additions to build properties
--include vendor/legion/build/core/main.mk
 
 # ------------------------------------------------------------
 # Define a function that, given a list of module tags, returns
@@ -426,43 +424,6 @@ endef
 subdir_makefiles_inc := .
 FULL_BUILD :=
 
-ifneq ($(ONE_SHOT_MAKEFILE),)
-# We've probably been invoked by the "mm" shell function
-# with a subdirectory's makefile.
-include $(SOONG_ANDROID_MK) $(wildcard $(ONE_SHOT_MAKEFILE))
-# Change CUSTOM_MODULES to include only modules that were
-# defined by this makefile; this will install all of those
-# modules as a side-effect.  Do this after including ONE_SHOT_MAKEFILE
-# so that the modules will be installed in the same place they
-# would have been with a normal make.
-CUSTOM_MODULES := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS)))
-
-# A helper goal printing out install paths
-define register_module_install_path
-.PHONY: GET-MODULE-INSTALL-PATH-$(1)
-GET-MODULE-INSTALL-PATH-$(1):
-	echo 'INSTALL-PATH: $(1) $(ALL_MODULES.$(1).INSTALLED)'
-endef
-
-SORTED_ALL_MODULES := $(sort $(ALL_MODULES))
-UNIQUE_ALL_MODULES :=
-$(foreach m,$(SORTED_ALL_MODULES),\
-    $(if $(call streq,$(m),$(lastword $(UNIQUE_ALL_MODULES))),,\
-        $(eval UNIQUE_ALL_MODULES += $(m))))
-SORTED_ALL_MODULES :=
-
-$(foreach mod,$(UNIQUE_ALL_MODULES),$(if $(ALL_MODULES.$(mod).INSTALLED),\
-    $(eval $(call register_module_install_path,$(mod)))\
-    $(foreach path,$(ALL_MODULES.$(mod).PATH),\
-        $(eval my_path_prefix := GET-INSTALL-PATH-IN)\
-        $(foreach component,$(subst /,$(space),$(path)),\
-            $(eval my_path_prefix := $$(my_path_prefix)-$$(component))\
-            $(eval .PHONY: $$(my_path_prefix))\
-            $(eval $$(my_path_prefix): GET-MODULE-INSTALL-PATH-$(mod))))))
-UNIQUE_ALL_MODULES :=
-
-else # ONE_SHOT_MAKEFILE
-
 ifneq ($(dont_bother),true)
 FULL_BUILD := true
 #
@@ -473,7 +434,7 @@ subdir_makefiles := $(SOONG_ANDROID_MK) $(file <$(OUT_DIR)/.module_paths/Android
 subdir_makefiles_total := $(words int $(subdir_makefiles) post finish)
 .KATI_READONLY := subdir_makefiles_total
 
-$(foreach mk,$(subdir_makefiles),$([$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)])$(eval include $(mk)))
+$(foreach mk,$(subdir_makefiles),$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] including $(mk) ...)$(eval include $(mk)))
 
 ifneq (,$(PDK_FUSION_PLATFORM_ZIP)$(PDK_FUSION_PLATFORM_DIR))
 # Bring in the PDK platform.zip modules.
@@ -483,8 +444,6 @@ endif # PDK_FUSION_PLATFORM_ZIP || PDK_FUSION_PLATFORM_DIR
 droid_targets : blueprint_tools
 
 endif # dont_bother
-
-endif # ONE_SHOT_MAKEFILE
 
 ifndef subdir_makefiles_total
 subdir_makefiles_total := $(words init post finish)
@@ -1098,8 +1057,7 @@ define resolve-product-relative-paths
     $(subst $(_product_path_placeholder),$(TARGET_COPY_OUT_PRODUCT),\
       $(subst $(_product_services_path_placeholder),$(TARGET_COPY_OUT_PRODUCT_SERVICES),\
         $(subst $(_odm_path_placeholder),$(TARGET_COPY_OUT_ODM),\
-          $(subst $(_vendor_overlay_path_placeholder),$(TARGET_COPY_OUT_VENDOR_OVERLAY),\
-            $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2))))))))
+          $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2)))))))
 endef
 
 # Returns modules included automatically as a result of certain BoardConfig
@@ -1551,21 +1509,12 @@ ramdisk: $(INSTALLED_RAMDISK_TARGET)
 .PHONY: ramdisk_debug
 ramdisk_debug: $(INSTALLED_DEBUG_RAMDISK_TARGET)
 
-.PHONY: systemtarball
-systemtarball: $(INSTALLED_SYSTEMTARBALL_TARGET)
-
-.PHONY: boottarball
-boottarball: $(INSTALLED_BOOTTARBALL_TARGET)
-
 .PHONY: userdataimage
 userdataimage: $(INSTALLED_USERDATAIMAGE_TARGET)
 
 ifneq (,$(filter userdataimage, $(MAKECMDGOALS)))
 $(call dist-for-goals, userdataimage, $(BUILT_USERDATAIMAGE_TARGET))
 endif
-
-.PHONY: userdatatarball
-userdatatarball: $(INSTALLED_USERDATATARBALL_TARGET)
 
 .PHONY: cacheimage
 cacheimage: $(INSTALLED_CACHEIMAGE_TARGET)
@@ -1743,7 +1692,6 @@ else # TARGET_BUILD_APPS
     $(call dist-for-goals, droidcore, \
       $(APPS_ZIP) \
       $(INTERNAL_EMULATOR_PACKAGE_TARGET) \
-      $(PACKAGE_STATS_FILE) \
     )
   endif
   endif
