@@ -38,8 +38,8 @@ Common options that apply to both of non-A/B and A/B OTAs
   -k  (--package_key) <key>
       Key to use to sign the package (default is the value of
       default_system_dev_certificate from the input target-files's
-      META/misc_info.txt, or "build/target/product/security/testkey" if that
-      value is not specified).
+      META/misc_info.txt, or "build/make/target/product/security/testkey" if
+      that value is not specified).
 
       For incremental OTAs, the default value is based on the source
       target-file, not the target build.
@@ -241,15 +241,15 @@ OPTIONS.skip_postinstall = False
 OPTIONS.retrofit_dynamic_partitions = False
 OPTIONS.skip_compatibility_check = False
 OPTIONS.output_metadata_path = None
-
 OPTIONS.override_device = 'auto'
 OPTIONS.backuptool = False
+
 
 METADATA_NAME = 'META-INF/com/android/metadata'
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
 AB_PARTITIONS = 'META/ab_partitions.txt'
-UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'RADIO/*', 'INSTALL/*', 'SYSTEM/build.prop']
+UNZIP_PATTERN = ['IMAGES/*', 'INSTALL/*', 'META/*', 'RADIO/*', 'SYSTEM/build.prop']
 RETROFIT_DAP_UNZIP_PATTERN = ['OTA/super_*.img', AB_PARTITIONS]
 
 # Images to be excluded from secondary payload. We essentially only keep
@@ -372,7 +372,7 @@ class BuildInfo(object):
   def items(self):
     return self.info_dict.items()
 
-  def GetBuildProp(self, prop, raise_error=False):
+  def GetBuildProp(self, prop):
     """Returns the inquired build property."""
     if prop in BuildInfo._RO_PRODUCT_RESOLVE_PROPS:
       return self._ResolveRoProductBuildProp(prop)
@@ -380,10 +380,36 @@ class BuildInfo(object):
     try:
       return self.info_dict.get("build.prop", {})[prop]
     except KeyError:
-      if raise_error:
-        raise common.ExternalError("couldn't find %s in build.prop" % (prop,))
-      else:
-        return "Unknown"
+      raise common.ExternalError("couldn't find %s in build.prop" % (prop,))
+
+  def _ResolveRoProductBuildProp(self, prop):
+    """Resolves the inquired ro.product.* build property"""
+    prop_val = self.info_dict.get("build.prop", {}).get(prop)
+    if prop_val:
+      return prop_val
+
+    source_order_val = self.info_dict.get("build.prop", {}).get(
+        "ro.product.property_source_order")
+    if source_order_val:
+      source_order = source_order_val.split(",")
+    else:
+      source_order = BuildInfo._RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER
+
+    # Check that all sources in ro.product.property_source_order are valid
+    if any([x not in BuildInfo._RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER
+            for x in source_order]):
+      raise common.ExternalError(
+          "Invalid ro.product.property_source_order '{}'".format(source_order))
+
+    for source in source_order:
+      source_prop = prop.replace(
+          "ro.product", "ro.product.{}".format(source), 1)
+      prop_val = self.info_dict.get(
+          "{}.build.prop".format(source), {}).get(source_prop)
+      if prop_val:
+        return prop_val
+
+    raise common.ExternalError("couldn't resolve {}".format(prop))
 
   def _ResolveRoProductBuildProp(self, prop):
     """Resolves the inquired ro.product.* build property"""
@@ -433,14 +459,14 @@ class BuildInfo(object):
         return self.GetBuildProp("ro.build.fingerprint")
       except common.ExternalError:
         return "{}/{}/{}:{}/{}/{}:{}/{}".format(
-          self.GetBuildProp("ro.product.brand"),
-          self.GetBuildProp("ro.product.name"),
-          self.GetBuildProp("ro.product.device"),
-          self.GetBuildProp("ro.build.version.release"),
-          self.GetBuildProp("ro.build.id"),
-          self.GetBuildProp("ro.build.version.incremental"),
-          self.GetBuildProp("ro.build.type"),
-          self.GetBuildProp("ro.build.tags"))
+            self.GetBuildProp("ro.product.brand"),
+            self.GetBuildProp("ro.product.name"),
+            self.GetBuildProp("ro.product.device"),
+            self.GetBuildProp("ro.build.version.release"),
+            self.GetBuildProp("ro.build.id"),
+            self.GetBuildProp("ro.build.version.incremental"),
+            self.GetBuildProp("ro.build.type"),
+            self.GetBuildProp("ro.build.tags"))
     return "%s/%s/%s:%s" % (
         self.GetOemProperty("ro.product.brand"),
         self.GetOemProperty("ro.product.name"),
@@ -529,7 +555,7 @@ class PayloadSigner(object):
     MODULUS_PREFIX = "Modulus="
     assert modulus_string.startswith(MODULUS_PREFIX)
     modulus_string = modulus_string[len(MODULUS_PREFIX):]
-    key_size = len(modulus_string) / 2
+    key_size = len(modulus_string) // 2
     assert key_size == 256 or key_size == 512, \
         "Unsupported key size {}".format(key_size)
     return key_size
@@ -968,18 +994,42 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   # Dump fingerprints
   script.Print("Target: {}".format(target_info.fingerprint))
 
+  android_version = target_info.GetBuildProp("ro.build.version.release")
+  build_id = target_info.GetBuildProp("ro.build.id")
+  build_date = target_info.GetBuildProp("ro.build.date")
+  security_patch = target_info.GetBuildProp("ro.build.version.security_patch")
+  device = target_info.GetBuildProp("ro.product.device")
+
+  script.Print("=================================================");
+  script.Print("");
+  script.Print("");
+  script.Print("                    LegionOS");
+  script.Print("");
+  script.Print("=================================================");
+  script.Print(" Android version  : %s"%(android_version));
+  script.Print(" Build id         : %s"%(build_id));
+  script.Print(" Build date       : %s"%(build_date));
+  script.Print(" Security patch   : %s"%(security_patch));
+  script.Print(" Device           : %s"%(device));
+  script.Print("=================================================");
+
   device_specific.FullOTA_InstallBegin()
+
+  if target_info.get("system_root_image") == "true":
+    sys_mount = "/"
+  else:
+    sys_mount = "/system"
 
   CopyInstallTools(output_zip)
   script.UnpackPackageDir("install", "/tmp/install")
   script.SetPermissionsRecursive("/tmp/install", 0, 0, 0755, 0644, None, None)
   script.SetPermissionsRecursive("/tmp/install/bin", 0, 0, 0755, 0755, None, None)
-  script.MountSys("check")
+  script.MountSys("check", sys_mount)
 
   if OPTIONS.backuptool:
-    script.MountSys("mount")
-    script.RunBackup("backup", "/tmp/system_mount/system")
-    script.MountSys("unmount")
+    script.Print("BackupTools: starting backup script")
+    script.MountSys("backup", sys_mount)
+    script.Print("BackupTools: DONE! Now real installation will begin")
 
   system_progress = 0.75
 
@@ -988,33 +1038,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   if HasVendorPartition(input_zip):
     system_progress -= 0.1
 
-#Print ASCII
-  manufacturer = target_info.GetBuildProp("ro.product.manufacturer")
-  build = target_info.GetBuildProp("ro.build.date")
-  android_version = target_info.GetBuildProp("ro.build.version.release")
-  build_id = target_info.GetBuildProp("ro.build.id")
-  security_patch = target_info.GetBuildProp("ro.build.version.security_patch")
-  device = target_info.GetBuildProp("ro.product.device")
-
-  script.Print("*******************************************************");
-  script.Print("* _      ______ _____ _____ ____  _   _  ____   ____ _*");
-  script.Print("*| |    |  ____/ ____|_   _/ __ \| \ | |/ __ \ / ____|*");
-  script.Print("*| |    | |__ | |  __  | || |  | |  \| | |  | | (___  *");
-  script.Print("*| |    |  __|| | |_ | | || |  | | . ` | |  | |\___ \ *");
-  script.Print("*| |____| |___| |__| |_| || |__| | |\  | |__| |____) |*");
-  script.Print("*|______|______\_____|_____\____/|_| \_|\____/|_____/ *");
-  script.Print("*						                                          *");
-  script.Print("*                   By RAJ KALE                       *");
-  script.Print("*          Thanks For Flashing LEGIONOS Q             *");
-  script.Print("*                                                     *");
-  script.Print("*=====================================================*");
-  script.Print(" Android Version : %s"%(android_version));
-  script.Print(" Build ID        : %s"%(build_id));
-  script.Print(" Build Date      : %s"%(build));
-  script.Print(" Security Patch  : %s"%(security_patch));
-  script.Print(" Device          : %s"%(device));
-  script.Print(" Manufacturer    : %s"%(manufacturer));
-  script.Print("*****************************************************");
+  script.ShowProgress(system_progress, 0)
 
   def GetBlockDifference(partition):
     # Full OTA is done as an "incremental" against an empty source image. This
@@ -1068,9 +1092,9 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   if OPTIONS.backuptool:
     script.ShowProgress(0.02, 10)
-    script.MountSys("mount")
-    script.RunBackup("restore", "/tmp/system_mount/system")
-    script.MountSys("unmount")
+    script.Print("BackupTools: Restoring backup")
+    script.MountSys("restore", sys_mount)
+    script.Print("BackupTools: DONE!")
 
   script.ShowProgress(0.05, 5)
   script.WriteRawImage("/boot", "boot.img")
@@ -1078,7 +1102,6 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.ShowProgress(0.2, 10)
   device_specific.FullOTA_InstallEnd()
 
-  script.Print("Enjoy LegionOS")
   if OPTIONS.extra_script is not None:
     script.AppendExtra(OPTIONS.extra_script)
 
@@ -1130,7 +1153,7 @@ def WriteMetadata(metadata, output):
     output: A ZipFile object or a string of the output file path.
   """
 
-  value = "".join(["%s=%s\n" % kv for kv in sorted(metadata.iteritems())])
+  value = "".join(["%s=%s\n" % kv for kv in sorted(metadata.items())])
   if isinstance(output, zipfile.ZipFile):
     common.ZipWriteStr(output, METADATA_NAME, value,
                        compress_type=zipfile.ZIP_STORED)
@@ -1146,7 +1169,7 @@ def HandleDowngradeMetadata(metadata, target_info, source_info):
 
   post_timestamp = target_info.GetBuildProp("ro.build.date.utc")
   pre_timestamp = source_info.GetBuildProp("ro.build.date.utc")
-  is_downgrade = long(post_timestamp) < long(pre_timestamp)
+  is_downgrade = int(post_timestamp) < int(pre_timestamp)
 
   if OPTIONS.downgrade:
     if not is_downgrade:
@@ -1471,7 +1494,7 @@ class AbOtaPropertyFiles(StreamingPropertyFiles):
     payload_offset += len(payload_info.extra) + len(payload_info.filename)
     payload_size = payload_info.file_size
 
-    with input_zip.open('payload.bin', 'r') as payload_fp:
+    with input_zip.open('payload.bin') as payload_fp:
       header_bin = payload_fp.read(24)
 
     # network byte order (big-endian)
@@ -1908,6 +1931,9 @@ endif;
     script.AddToZip(target_zip, output_zip, input_path=OPTIONS.updater_binary)
   metadata["ota-required-cache"] = str(script.required_cache)
 
+  common.ZipWriteStr(output_zip, "system/build.prop",
+                     ""+target_zip.read("SYSTEM/build.prop"))
+
   # We haven't written the metadata entry yet, which will be handled in
   # FinalizeMetadata().
   common.ZipClose(output_zip)
@@ -1980,7 +2006,6 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
 
   with zipfile.ZipFile(input_file, 'r') as input_zip:
     infolist = input_zip.infolist()
-    namelist = input_zip.namelist()
 
   input_tmp = common.UnzipTemp(input_file, UNZIP_PATTERN)
   for info in infolist:
@@ -2076,7 +2101,7 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
   target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
   shutil.copyfile(input_file, target_file)
 
-  with zipfile.ZipFile(input_file, 'r') as input_zip:
+  with zipfile.ZipFile(input_file) as input_zip:
     namelist = input_zip.namelist()
 
   input_tmp = common.UnzipTemp(input_file, RETROFIT_DAP_UNZIP_PATTERN)
@@ -2100,8 +2125,8 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
     for partition in ab_partitions:
       if (partition in dynamic_partition_list and
           partition not in super_block_devices):
-          logger.info("Dropping %s from ab_partitions.txt", partition)
-          continue
+        logger.info("Dropping %s from ab_partitions.txt", partition)
+        continue
       f.write(partition + "\n")
   to_delete = [AB_PARTITIONS]
 
@@ -2113,7 +2138,7 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
   to_delete += [DYNAMIC_PARTITION_INFO]
 
   # Remove the existing partition images as well as the map files.
-  to_delete += replace.values()
+  to_delete += list(replace.values())
   to_delete += ['IMAGES/{}.map'.format(dev) for dev in super_block_devices]
 
   common.ZipDelete(target_file, to_delete)
@@ -2123,7 +2148,7 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
   # Write super_{foo}.img as {foo}.img.
   for src, dst in replace.items():
     assert src in namelist, \
-          'Missing {} in {}; {} cannot be written'.format(src, input_file, dst)
+        'Missing {} in {}; {} cannot be written'.format(src, input_file, dst)
     unzipped_file = os.path.join(input_tmp, *src.split('/'))
     common.ZipWrite(target_zip, unzipped_file, arcname=dst)
 
@@ -2194,6 +2219,11 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
                                additional_args=additional_args)
     secondary_payload.Sign(payload_signer)
     secondary_payload.WriteToZip(output_zip)
+
+  target_zip = zipfile.ZipFile(target_file, "r")
+  common.ZipWriteStr(output_zip, "system/build.prop",
+                     target_zip.read("SYSTEM/build.prop"))
+  common.ZipClose(target_zip)
 
   # If dm-verity is supported for the device, copy contents of care_map
   # into A/B OTA package.
@@ -2412,7 +2442,7 @@ def main(argv):
     if OPTIONS.package_key is None:
       OPTIONS.package_key = OPTIONS.info_dict.get(
           "default_system_dev_certificate",
-          "build/target/product/security/testkey")
+          "build/make/target/product/security/testkey")
     # Get signing keys
     OPTIONS.key_passwords = common.GetKeyPasswords([OPTIONS.package_key])
 
@@ -2437,7 +2467,8 @@ def main(argv):
   OPTIONS.cache_size = cache_size
 
   if OPTIONS.extra_script is not None:
-    OPTIONS.extra_script = open(OPTIONS.extra_script).read()
+    with open(OPTIONS.extra_script) as fp:
+      OPTIONS.extra_script = fp.read()
 
   if OPTIONS.extracted_input is not None:
     OPTIONS.input_tmp = OPTIONS.extracted_input

@@ -55,5 +55,6 @@ if [ -n "$BUILD_THUMBPRINT" ] ; then
   echo "ro.build.thumbprint=$BUILD_THUMBPRINT"
 fi
 
-echo "ro.legion.device=$LEGION_DEVICE"
+echo "ro.arrow.device=$ARROW_DEVICE"
+
 echo "# end build properties"
