@@ -465,7 +465,7 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/compatibility_matrix.xml)
 
 # Remove DisplayCutoutEmulation overlays
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/overlay/DisplayCutoutEmulationWide)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/overlay/DisplayCutoutEmulationNlegion)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/overlay/DisplayCutoutEmulationNarrow)
 
 # Remove obsolete intermedates src files
 $(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/*/*_intermediates/src/RenderScript.stamp*)
