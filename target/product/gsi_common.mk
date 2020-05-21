@@ -33,6 +33,7 @@ ifeq ($(LEGION_BUILD),)
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.apex.updatable=false
 
+ifeq ($(LEGION_BUILD),)
 # Additional settings used in all AOSP builds
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.config.ringtone=Ring_Synth_04.ogg \
