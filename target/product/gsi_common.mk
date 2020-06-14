@@ -32,6 +32,7 @@ ifeq ($(LEGION_BUILD),)
 # Properties set in product take precedence over those in vendor.
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.apex.updatable=false
+endif
 
 ifeq ($(LEGION_BUILD),)
 # Additional settings used in all AOSP builds
